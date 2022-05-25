@@ -5,10 +5,12 @@ import { hash, compare, genSalt } from 'bcryptjs'
 import { UserModel } from '../user/user.model'
 import { InjectModel } from 'nestjs-typegoose'
 import { AuthDto } from './dto/auth.dto'
+import { JwtService } from '@nestjs/jwt'
+import { RefreshTokenDto } from './dto/refreshToken.dto'
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(UserModel) private readonly UserModel: ModelType<UserModel>) {
+  constructor(@InjectModel(UserModel) private readonly UserModel: ModelType<UserModel>, private readonly jwtService: JwtService) {
   }
 
   async register(dto: AuthDto) {
@@ -22,11 +24,36 @@ export class AuthService {
       email: dto.email,
       password: await hash(dto.password, salt)
     })
-    return newUser.save()
+    const tokens = await this.issueTokenPair(String(newUser._id))
+    return {
+      user: this.returnUserFields(newUser),
+      ...tokens
+    }
   }
 
   async login(dto: AuthDto) {
-    return this.validateUser(dto)
+    const user = await this.validateUser(dto)
+    const tokens = await this.issueTokenPair(String(user._id))
+    return {
+      user: this.returnUserFields(user),
+      ...tokens
+    }
+  }
+
+  async getNewTokens({refreshToken}: RefreshTokenDto) {
+    if (!refreshToken){
+      throw new UnauthorizedException('Please login')
+    }
+    const result = await this.jwtService.verifyAsync(refreshToken)
+    if (!result) {
+      throw new UnauthorizedException('Invalid Token')
+    }
+    const user = await this.UserModel.findById(result._id)
+    const tokens = await this.issueTokenPair(String(user._id))
+    return {
+      user: this.returnUserFields(user),
+      ...tokens
+    }
   }
 
   async validateUser(dto: AuthDto) {
@@ -41,4 +68,21 @@ export class AuthService {
     return user
   }
 
+  async issueTokenPair (userId: string) {
+    const data = {_id: userId}
+    const accessToken = await this.jwtService.signAsync(data, {
+      expiresIn: '1h'
+    })
+    const refreshToken = await this.jwtService.signAsync(data, {
+      expiresIn: '15d'
+    })
+    return {accessToken, refreshToken}
+  }
+  returnUserFields (user: UserModel) {
+    return {
+      _id: user._id,
+      email: user.email,
+      isAdmin: user.isAdmin
+    }
+  }
 }
