@@ -10,12 +10,10 @@ import { RefreshTokenDto } from './dto/refreshToken.dto'
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(UserModel) private readonly UserModel: ModelType<UserModel>, private readonly jwtService: JwtService) {
-  }
+  constructor(@InjectModel(UserModel) private readonly UserModel: ModelType<UserModel>, private readonly jwtService: JwtService) {}
 
   async register(dto: AuthDto) {
     const user = await this.UserModel.findOne({ email: dto.email })
-    console.log(user)
     if (user) {
       throw new BadRequestException('Email already taken')
     }
@@ -24,6 +22,7 @@ export class AuthService {
       email: dto.email,
       password: await hash(dto.password, salt)
     })
+    await newUser.save()
     const tokens = await this.issueTokenPair(String(newUser._id))
     return {
       user: this.returnUserFields(newUser),
