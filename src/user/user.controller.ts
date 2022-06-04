@@ -3,6 +3,8 @@ import { UserService } from './user.service'
 import { Auth } from '../auth/decorators/auth.decorator'
 import { User } from './decorators/user.decorator'
 import { UpdateUserDto } from './dto/update-user.dto'
+import { Types } from 'mongoose'
+import { UserModel } from './user.model'
 
 @Controller('users')
 export class UserController {
@@ -24,6 +26,18 @@ export class UserController {
   @Auth('admin')
   async getProfile(@User('_id') _id: string) {
     return this.userService.getUserById(_id)
+  }
+
+  @Get('profile/favorites')
+  @Auth()
+  async getFavorites(@User('_id') _id: Types.ObjectId) {
+    return this.userService.getFavoritesMovies(_id)
+  }
+
+  @Put('profile/favorites')
+  @Auth()
+  async toggleFavorites(@Body('movieId') movieId: Types.ObjectId,@User() user: UserModel) {
+    return this.userService.toggleFavorite(movieId, user)
   }
 
   @Put('profile')
