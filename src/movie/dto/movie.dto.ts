@@ -27,7 +27,6 @@ export class MovieDto {
   @IsString()
   slug: string
 
-  @IsArray()
   @IsObject()
   parameters?: Parameters
 
@@ -42,6 +41,5 @@ export class MovieDto {
   @IsString({each: true})
   actors: string[]
 
-  @IsBoolean()
   isSendTelegram?: boolean
 }
