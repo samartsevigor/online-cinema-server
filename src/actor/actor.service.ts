@@ -23,7 +23,24 @@ export class ActorService {
         ]
       }
     }
-    return this.ActorModel.find(options).select('-updatedAt -v').exec()
+    return this.ActorModel
+      .aggregate()
+      .match(options)
+      .lookup({
+        from: 'MOvie',
+        foreignField: 'actors',
+        localField: '_id',
+        as: 'movies'
+      })
+      .addFields({
+        countMovies: {
+          $size: '$movies'
+        }
+      })
+      .project({__v: 0, updatedAt: 0, movies: 0})
+      .sort({
+        createdAt: -1
+      }).exec()
   }
 
   async bySlug(slug: string) {
