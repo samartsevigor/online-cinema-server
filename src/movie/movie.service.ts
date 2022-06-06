@@ -29,7 +29,7 @@ export class MovieService {
     return docs
   }
 
-  async byGenres(genres: Array<string>) {
+  async byGenres(genres: Array<Types.ObjectId>) {
     const docs =  await this.MovieModel.find({genres: {$in: genres}}).exec()
     if (!docs) throw new NotFoundException('Movies not found')
     return docs
@@ -98,6 +98,12 @@ export class MovieService {
     const deleteDoc = await this.MovieModel.findByIdAndDelete(id)
     if (!deleteDoc) throw new NotFoundException('Movie not found')
     return deleteDoc
+  }
+
+  async updateRating(id: Types.ObjectId, newRating: number) {
+    return this.MovieModel.findByIdAndUpdate(id, {
+      rating: newRating
+    }, {new: true}).exec()
   }
 
 }
