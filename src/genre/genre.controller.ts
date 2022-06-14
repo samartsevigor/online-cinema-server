@@ -13,8 +13,8 @@ export class GenreController {
   }
 
   @Get('collections')
-  async getCollections( @Query('searchTerm') searchTerm?: string) {
-    return this.genreService.getAll(searchTerm)
+  async getCollections() {
+    return this.genreService.getCollections()
   }
 
   @Get('by-slug/:slug')

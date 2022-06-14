@@ -42,7 +42,7 @@ export class MovieController {
 
   @HttpCode(200)
   @Post('by-genres')
-  async byGenres( @Body('genresIds') genresIds: Array<string>) {
+  async byGenres( @Body('genresIds') genresIds: Array<Types.ObjectId>) {
     return this.movieService.byGenres(genresIds)
   }
 

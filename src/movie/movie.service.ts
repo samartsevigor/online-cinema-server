@@ -8,29 +8,29 @@ import {Types} from 'mongoose'
 @Injectable()
 export class MovieService {
 
-  constructor(@InjectModel(MovieModel) private readonly MovieModel: ModelType<MovieModel>) {}
+  constructor(@InjectModel(MovieModel) private readonly movieModel: ModelType<MovieModel>) {}
 
 
   async byId(_id: Types.ObjectId) {
-    const doc = await this.MovieModel.findById({_id}).exec()
+    const doc = await this.movieModel.findById({_id}).exec()
     if (!doc) throw new NotFoundException('Movie not found')
     return doc
   }
 
   async bySlug(slug: string) {
-    const doc = await this.MovieModel.findOne({slug}).exec()
+    const doc = await this.movieModel.findOne({slug}).exec()
     if (!doc) throw new NotFoundException('Movie not found')
     return doc
   }
 
   async byActor(actorId: string) {
-    const docs =  await this.MovieModel.find({actors: actorId}).exec()
+    const docs =  await this.movieModel.find({actors: actorId}).exec()
     if (!docs) throw new NotFoundException('Movies not found')
     return docs
   }
 
   async byGenres(genres: Array<Types.ObjectId>) {
-    const docs =  await this.MovieModel.find({genres: {$in: genres}}).exec()
+    const docs =  await this.movieModel.find({genres: {$in: genres}}).exec()
     if (!docs) throw new NotFoundException('Movies not found')
     return docs
   }
@@ -46,7 +46,7 @@ export class MovieService {
         ]
       }
     }
-    return this.MovieModel
+    return this.movieModel
       .find(options)
       .select('-updatedAt -v')
       .populate('genres actors')
@@ -58,7 +58,7 @@ export class MovieService {
   }
 
   async byMostPopular() {
-    const docs = await this.MovieModel
+    const docs = await this.movieModel
       .find({countOpened: {$gt: 0}})
       .sort({countOpened: -1})
       .populate('genres')
@@ -67,7 +67,7 @@ export class MovieService {
   }
 
   async updateCountOpened(slug: string) {
-    const updateDoc = await this.MovieModel
+    const updateDoc = await this.movieModel
       .findOneAndUpdate({slug}, {$inc: {countOpened: 1}}, {new: true})
     if (!updateDoc) throw new NotFoundException('Movies not found')
     return updateDoc
@@ -84,24 +84,24 @@ export class MovieService {
       videoUrl: '',
       slug: '',
     }
-    const movie = await this.MovieModel.create(defaultValue)
+    const movie = await this.movieModel.create(defaultValue)
     return movie._id
   }
 
   async update(_id: string, dto: MovieDto) {
-    const updateDoc = await this.MovieModel.findByIdAndUpdate(_id, dto, {new: true})
+    const updateDoc = await this.movieModel.findByIdAndUpdate(_id, dto, {new: true})
     if (!updateDoc) throw new NotFoundException('Movie not found')
     return updateDoc
   }
 
   async delete(id: string) {
-    const deleteDoc = await this.MovieModel.findByIdAndDelete(id)
+    const deleteDoc = await this.movieModel.findByIdAndDelete(id)
     if (!deleteDoc) throw new NotFoundException('Movie not found')
     return deleteDoc
   }
 
   async updateRating(id: Types.ObjectId, newRating: number) {
-    return this.MovieModel.findByIdAndUpdate(id, {
+    return this.movieModel.findByIdAndUpdate(id, {
       rating: newRating
     }, {new: true}).exec()
   }

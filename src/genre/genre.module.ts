@@ -16,7 +16,7 @@ import { MovieModule } from '../movie/movie.module'
         }
       }
     ]),
-  MovieModule
+  MovieModule,
   ],
   controllers: [GenreController]
 })

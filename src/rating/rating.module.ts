@@ -3,7 +3,7 @@ import { RatingController } from './rating.controller';
 import { RatingService } from './rating.service';
 import { TypegooseModule } from 'nestjs-typegoose'
 import { RatingModel } from './rating.model'
-import { MovieModel } from '../movie/movie.model'
+import { MovieModule } from '../movie/movie.module'
 
 @Module({
   imports: [
@@ -15,9 +15,10 @@ import { MovieModel } from '../movie/movie.model'
         }
       }
     ]),
-  MovieModel
+  MovieModule
   ],
   controllers: [RatingController],
-  providers: [RatingService]
+  providers: [RatingService],
+  exports: [RatingService],
 })
 export class RatingModule {}

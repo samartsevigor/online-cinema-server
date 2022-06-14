@@ -8,10 +8,10 @@ import { ICollection } from './genre.interface'
 
 @Injectable()
 export class GenreService {
-  constructor(@InjectModel(GenreModel) private readonly GenreModel: ModelType<GenreModel>,
-  private readonly movieService: MovieService
-  ) {
-  }
+  constructor(@InjectModel(GenreModel)
+              private readonly genreModel: ModelType<GenreModel>,
+              private readonly movieService: MovieService
+  ) {}
 
   async getAll(searchTerm?: string) {
     let options = {}
@@ -30,16 +30,16 @@ export class GenreService {
         ]
       }
     }
-    return this.GenreModel.find(options).select('-updatedAt -v').exec()
+    return this.genreModel.find(options).select('-updatedAt -v').exec()
   }
 
   async bySlug(slug: string) {
-    return this.GenreModel.findOne({slug}).exec()
+    return this.genreModel.findOne({slug}).exec()
 
   }
 
   async getGenreById(_id: string) {
-    const genre = await this.GenreModel.findById(_id)
+    const genre = await this.genreModel.findById(_id)
     if (!genre) throw new NotFoundException('Genre not found')
     return genre
   }
@@ -51,7 +51,7 @@ export class GenreService {
       description: '',
       icon: ''
     }
-    const genre = await this.GenreModel.create(defaultValue)
+    const genre = await this.genreModel.create(defaultValue)
     return genre._id
   }
 
@@ -72,13 +72,13 @@ export class GenreService {
   }
 
   async update(_id: string, dto: UpdateGenreDto) {
-   const updateDoc = await this.GenreModel.findByIdAndUpdate(_id, dto, {new: true})
+   const updateDoc = await this.genreModel.findByIdAndUpdate(_id, dto, {new: true})
     if (!updateDoc) throw new NotFoundException('Genre not found')
     return updateDoc
   }
 
   async delete(id: string) {
-    const deleteDoc = await this.GenreModel.findByIdAndDelete(id)
+    const deleteDoc = await this.genreModel.findByIdAndDelete(id)
     if (!deleteDoc) throw new NotFoundException('Genre not found')
     return deleteDoc
   }
