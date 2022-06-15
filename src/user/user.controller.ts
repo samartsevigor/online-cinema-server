@@ -5,7 +5,7 @@ import { User } from './decorators/user.decorator'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { Types } from 'mongoose'
 import { UserModel } from './user.model'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiPropertyOptional, ApiQuery, ApiTags } from '@nestjs/swagger'
 
 @ApiTags('Users')
 @Controller('users')
@@ -14,6 +14,8 @@ export class UserController {
 
   @Get('')
   @Auth('admin')
+  @ApiPropertyOptional()
+  @ApiQuery({name: 'searchTerm', required: false})
   async getUsers( @Query('searchTerm') searchTerm?: string) {
     return this.userService.getAllUsers(searchTerm)
   }

@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, Valid
 import { Auth } from '../auth/decorators/auth.decorator'
 import { GenreService } from './genre.service'
 import { UpdateGenreDto } from './dto/update-genre.dto'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiQuery, ApiTags } from '@nestjs/swagger'
 
 @ApiTags('Genres')
 @Controller('genres')
@@ -10,6 +10,7 @@ export class GenreController {
   constructor(private readonly genreService: GenreService) {}
 
   @Get()
+  @ApiQuery({name: 'searchTerm', required: false})
   async getGenres( @Query('searchTerm') searchTerm?: string) {
     return this.genreService.getAll(searchTerm)
   }

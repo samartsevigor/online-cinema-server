@@ -15,39 +15,58 @@ import { MovieService } from './movie.service'
 import { Auth } from '../auth/decorators/auth.decorator'
 import { MovieDto } from './dto/movie.dto'
 import {Types} from 'mongoose'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 
 @ApiTags('Movies')
 @Controller('movies')
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
+  @ApiOperation({
+    summary: 'Get all movies',
+  })
+  @ApiQuery({name: 'searchTerm', required: false})
   @Get()
   async getMovies( @Query('searchTerm') searchTerm?: string) {
     return this.movieService.getAll(searchTerm)
   }
 
+  @ApiOperation({
+    summary: 'Get movie by id',
+  })
   @Get('by-id/:id')
   async byId( @Param('id') id: Types.ObjectId) {
     return this.movieService.byId(id)
   }
 
+  @ApiOperation({
+    summary: 'Get movie by slug',
+  })
   @Get('by-slug/:slug')
   async bySlug( @Param('slug') slug: string) {
     return this.movieService.bySlug(slug)
   }
 
+  @ApiOperation({
+    summary: 'Get movies by actor',
+  })
   @Get('by-actor/:actorId')
   async byActor( @Param('actorId') actorId: string) {
     return this.movieService.byActor(actorId)
   }
 
+  @ApiOperation({
+    summary: 'Get movies by genre',
+  })
   @HttpCode(200)
   @Post('by-genres')
   async byGenres( @Body('genresIds') genresIds: Array<Types.ObjectId>) {
     return this.movieService.byGenres(genresIds)
   }
 
+  @ApiOperation({
+    summary: 'Get most popular movies',
+  })
   @Get('most-popular')
   async mostPopular() {
     return this.movieService.byMostPopular()

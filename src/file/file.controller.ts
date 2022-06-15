@@ -2,7 +2,7 @@ import { Controller, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs
 import { FilesInterceptor } from '@nestjs/platform-express'
 import { Auth } from '../auth/decorators/auth.decorator'
 import { FileService } from './file.service'
-import { ApiHeader, ApiTags } from '@nestjs/swagger'
+import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger'
 
 
 @ApiTags('Upload files')
@@ -12,6 +12,7 @@ export class FileController {
 
   @Post()
   @Auth('admin')
+  @ApiQuery({name: 'folder', required: true})
   @UseInterceptors(FilesInterceptor('file'))
   async uploadFiles(@UploadedFiles() file: Express.Multer.File[], @Query('folder') folder?: string) {
     return this.fileService.saveFiles(file, folder)
