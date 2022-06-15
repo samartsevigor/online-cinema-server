@@ -2,7 +2,9 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, Valid
 import { Auth } from '../auth/decorators/auth.decorator'
 import { ActorService } from './actor.service'
 import { ActorDto } from './dto/actor.dto'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('Actors')
 @Controller('actors')
 export class ActorController {
   constructor(private readonly actorService: ActorService) {}

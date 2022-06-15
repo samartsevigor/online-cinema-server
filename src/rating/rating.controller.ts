@@ -4,7 +4,9 @@ import { Types } from 'mongoose'
 import { Auth } from '../auth/decorators/auth.decorator'
 import { User } from '../user/decorators/user.decorator'
 import { RatingDto } from './dto/rating.dto'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('Ratting')
 @Controller('ratings')
 export class RatingController {
   constructor(private readonly ratingService: RatingService) {}

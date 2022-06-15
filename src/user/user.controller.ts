@@ -5,7 +5,9 @@ import { User } from './decorators/user.decorator'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { Types } from 'mongoose'
 import { UserModel } from './user.model'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}

@@ -15,7 +15,9 @@ import { MovieService } from './movie.service'
 import { Auth } from '../auth/decorators/auth.decorator'
 import { MovieDto } from './dto/movie.dto'
 import {Types} from 'mongoose'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('Movies')
 @Controller('movies')
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
