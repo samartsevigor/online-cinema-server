@@ -7,7 +7,7 @@ import {
   Param,
   Post,
   Put,
-  Query,
+  Query, Req,Headers,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common'
@@ -25,9 +25,9 @@ export class MovieController {
   @ApiOperation({
     summary: 'Get all movies',
   })
-  @ApiQuery({name: 'searchTerm', required: false})
   @Get()
-  async getMovies( @Query('searchTerm') searchTerm?: string) {
+  async getMovies( @Headers() headers: Headers, @Query('searchTerm') searchTerm?: string) {
+    console.log(headers, 333)
     return this.movieService.getAll(searchTerm)
   }
 
