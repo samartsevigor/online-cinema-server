@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Put, Query } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  Query,
+} from '@nestjs/common'
 import { UserService } from './user.service'
 import { Auth } from '../auth/decorators/auth.decorator'
 import { User } from './decorators/user.decorator'
@@ -15,8 +23,8 @@ export class UserController {
   @Get('')
   @Auth('admin')
   @ApiPropertyOptional()
-  @ApiQuery({name: 'searchTerm', required: false})
-  async getUsers( @Query('searchTerm') searchTerm?: string) {
+  @ApiQuery({ name: 'searchTerm', required: false })
+  async getUsers(@Query('searchTerm') searchTerm?: string) {
     return this.userService.getAllUsers(searchTerm)
   }
 
@@ -40,7 +48,10 @@ export class UserController {
 
   @Put('profile/favorites')
   @Auth()
-  async toggleFavorites(@Body('movieId') movieId: Types.ObjectId,@User() user: UserModel) {
+  async toggleFavorites(
+    @Body('movieId') movieId: Types.ObjectId,
+    @User() user: UserModel,
+  ) {
     return this.userService.toggleFavorite(movieId, user)
   }
 
@@ -52,13 +63,13 @@ export class UserController {
 
   @Put(':id')
   @Auth('admin')
-  async updateUser( @Param('id') id: string, @Body() dto: UpdateUserDto) {
+  async updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.userService.updateProfile(id, dto)
   }
 
   @Delete(':id')
   @Auth('admin')
-  async deleteUser( @Param('id') id: string) {
+  async deleteUser(@Param('id') id: string) {
     return this.userService.deleteUser(id)
   }
 }

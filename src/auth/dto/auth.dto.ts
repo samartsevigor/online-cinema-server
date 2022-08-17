@@ -7,7 +7,7 @@ export class AuthDto {
   email: string
 
   @ApiProperty()
-  @MinLength(6, {message: 'Password cannot be less then 6 characters'})
+  @MinLength(6, { message: 'Password cannot be less then 6 characters' })
   @IsString()
   password: string
 }

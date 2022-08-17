@@ -5,6 +5,12 @@ import { MovieModel } from '../movie/movie.model'
 export interface UserModel extends Base {}
 
 export class UserModel extends TimeStamps {
+  @prop({ default: '' })
+  name: string
+  @prop({ default: '' })
+  surname: boolean
+  @prop({ default: '' })
+  linkedIn: boolean
   @prop({unique: true})
   email: string
   @prop()

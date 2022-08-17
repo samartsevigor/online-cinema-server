@@ -8,8 +8,9 @@ import { Types } from 'mongoose'
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(UserModel) private readonly UserModel: ModelType<UserModel>) {
-  }
+  constructor(
+    @InjectModel(UserModel) private readonly UserModel: ModelType<UserModel>,
+  ) {}
 
   async getUserById(_id: string) {
     const user = await this.UserModel.findById(_id)
@@ -20,18 +21,22 @@ export class UserService {
   async updateProfile(_id: string, dto: UpdateUserDto) {
     const user = await this.getUserById(_id)
     const isSame = await this.UserModel.findOne({ email: dto.email })
-    if (isSame && String(isSame._id) !== _id) throw new NotFoundException('Email is busy')
-
+    if (dto.email && isSame && String(isSame._id) !== _id)
+      throw new NotFoundException('Email is busy')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const updatedUser = { ...user._doc, ...dto }
     if (dto.password) {
       const salt = await genSalt(10)
-      user.password = await hash(dto.password, salt)
+      updatedUser.password = await hash(dto.password, salt)
     }
-    if (dto.isAdmin || dto.isAdmin === false) {
-      user.isAdmin = dto.isAdmin
+    if (updatedUser.isAdmin || updatedUser.isAdmin === false) {
+      updatedUser.isAdmin = dto.isAdmin
     }
-    user.email = dto.email
-    await user.save()
-    return
+    console.log(updatedUser, 999)
+    return this.UserModel.findByIdAndUpdate(_id, updatedUser, {
+      new: true,
+    }).exec()
   }
 
   async getUsersCount() {
@@ -46,20 +51,22 @@ export class UserService {
     let options = {}
     if (searchTerm) {
       options = {
-        "$or": [
+        $or: [
           {
-            email: new RegExp(searchTerm, 'i')
-          }
-        ]
+            email: new RegExp(searchTerm, 'i'),
+          },
+        ],
       }
     }
     return this.UserModel.find(options).select('-password -updatedAt -v').exec()
   }
 
   async toggleFavorite(movieId: Types.ObjectId, user: UserModel) {
-    const {_id, favorites} = user
+    const { _id, favorites } = user
     await this.UserModel.findByIdAndUpdate(_id, {
-      favorites: favorites.includes(movieId) ? favorites.filter(item => item !== movieId) : [...favorites, movieId]
+      favorites: favorites.includes(movieId)
+        ? favorites.filter((item) => item !== movieId)
+        : [...favorites, movieId],
     })
   }
 
@@ -68,10 +75,10 @@ export class UserService {
       .populate({
         path: 'favorites',
         populate: {
-          path: 'genres'
-        }
+          path: 'genres',
+        },
       })
       .exec()
-      .then(data => data.favorites)
+      .then((data) => data.favorites)
   }
 }
