@@ -8,9 +8,9 @@ export class UserModel extends TimeStamps {
   @prop({ default: '' })
   name: string
   @prop({ default: '' })
-  surname: boolean
+  surname: string
   @prop({ default: '' })
-  linkedIn: boolean
+  linkedIn: string
   @prop({unique: true})
   email: string
   @prop()
