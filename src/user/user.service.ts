@@ -21,7 +21,7 @@ export class UserService {
   async updateProfile(_id: string, dto: UpdateUserDto) {
     const user = await this.getUserById(_id)
     const isSame = await this.UserModel.findOne({ email: dto.email })
-    if (dto.email && isSame && String(isSame._id) !== _id)
+    if (dto.email && isSame && String(isSame._id) !== String(_id))
       throw new NotFoundException('Email is busy')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

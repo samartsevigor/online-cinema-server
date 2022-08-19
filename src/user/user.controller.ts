@@ -19,6 +19,12 @@ import { ApiPropertyOptional, ApiQuery, ApiTags } from '@nestjs/swagger'
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+  @Get('profile')
+  @Auth()
+  async getProfile(@User('_id') _id: string) {
+    console.log(_id, 9999)
+    return this.userService.getUserById(_id)
+  }
 
   @Get('')
   @Auth('admin')
@@ -32,12 +38,6 @@ export class UserController {
   @Auth('admin')
   async getUser(@Param('id') id: string) {
     return this.userService.getUserById(id)
-  }
-
-  @Get('profile')
-  @Auth('admin')
-  async getProfile(@User('_id') _id: string) {
-    return this.userService.getUserById(_id)
   }
 
   @Get('profile/favorites')
